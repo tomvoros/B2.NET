@@ -184,12 +184,13 @@ namespace B2Net {
 				file.FileId = values.First();
 			}
             // TODO: File Info headers
-            var fileInfoHeaders = response.Headers.Where(h => h.Key.ToLower().Contains("x-bz-info"));
+            var fileInfoHeaders = response.Headers.Where(h => h.Key.StartsWith("X-Bz-Info-", StringComparison.OrdinalIgnoreCase));
             var infoData = new Dictionary<string, string>();
             if (fileInfoHeaders.Count() > 0) {
                 foreach (var fileInfo in fileInfoHeaders)
                 {
-                    infoData.Add(fileInfo.Key, fileInfo.Value.First());
+                    // Substring(10) skips the "X-Bz-Info-" prefix
+                    infoData.Add(fileInfo.Key.Substring(10), fileInfo.Value.First());
                 }
             }
             file.FileInfo = infoData;
