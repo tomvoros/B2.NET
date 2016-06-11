@@ -12,7 +12,7 @@ namespace B2Net.Http {
 		public static async Task<T> ParseResponse<T>(HttpResponseMessage response) {
 			var jsonResponse = await response.Content.ReadAsStringAsync();
 
-			Utilities.CheckForErrors(response);
+			await Utilities.CheckForErrors(response);
 
 			return JsonConvert.DeserializeObject<T>(jsonResponse);
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace B2Net.Models {
 		public string Action { get; set; }
 		public float Size { get; set; }
 		public string UploadTimestamp { get; set; }
-		public byte[] FileData { get; set; }
+        public Stream FileStream { get; set; }
 		// Uploaded File Response
 		public string ContentLength { get; set; }
 		public string ContentSHA1 { get; set; }

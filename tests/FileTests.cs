@@ -136,7 +136,7 @@ namespace B2Net.Tests {
 
             // Test download
             var download = Client.Files.DownloadByName(file.FileName, TestBucket.BucketName).Result;
-            var downloadHash = Utilities.GetSHA1Hash(download.FileData);
+            var downloadHash = Utilities.GetSHA1Hash(download.FileStream);
 
             Assert.AreEqual(hash, downloadHash);
         }
@@ -159,7 +159,7 @@ namespace B2Net.Tests {
 
             // Test download
             var download = Client.Files.DownloadById(file.FileId).Result;
-            var downloadHash = Utilities.GetSHA1Hash(download.FileData);
+            var downloadHash = Utilities.GetSHA1Hash(download.FileStream);
 
             Assert.AreEqual(hash, downloadHash);
             Assert.AreEqual(1, download.FileInfo.Count);
@@ -178,7 +178,7 @@ namespace B2Net.Tests {
 
 			// Test download
 			var download = Client.Files.DownloadById(file.FileId).Result;
-			var downloadHash = Utilities.GetSHA1Hash(download.FileData);
+			var downloadHash = Utilities.GetSHA1Hash(download.FileStream);
 
 			Assert.AreEqual(hash, downloadHash);
 		}

@@ -111,10 +111,8 @@ namespace B2Net {
 			request = FileDownloadRequestGenerators.DownloadByName(_options, bucketName, fileName);
 
 			// Send the download request
-			var response = await _client.SendAsync(request, cancelToken);
-
-			Utilities.CheckForErrors(response);
-
+			var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelToken);
+            
 			// Create B2File from response
 			return await ParseDownloadResponse(response);
 		}
@@ -131,7 +129,7 @@ namespace B2Net {
 			request = FileDownloadRequestGenerators.DownloadById(_options, fileId);
 
 			// Send the download request
-			var response = await _client.SendAsync(request, cancelToken);
+			var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancelToken);
 
 			// Create B2File from response
 			return await ParseDownloadResponse(response);
@@ -170,7 +168,7 @@ namespace B2Net {
 		}
 
 		private async Task<B2File> ParseDownloadResponse(HttpResponseMessage response) {
-			Utilities.CheckForErrors(response);
+			await Utilities.CheckForErrors(response);
 
 			var file = new B2File();
 			IEnumerable<string> values;
@@ -195,8 +193,8 @@ namespace B2Net {
                 }
             }
             file.FileInfo = infoData;
-            file.FileData = await response.Content.ReadAsByteArrayAsync();
-
+            file.FileStream = await response.Content.ReadAsStreamAsync();
+            
 			return await Task.FromResult(file);
 		}
 

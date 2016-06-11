@@ -5,6 +5,8 @@ using System.Security.Cryptography;
 using System.Text;
 using B2Net.Models;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace B2Net {
 	public static class Utilities {
@@ -17,9 +19,9 @@ namespace B2Net {
 			return authHeader + credentials;
 		}
 		
-		public static void CheckForErrors(HttpResponseMessage response) {
+		public static async Task CheckForErrors(HttpResponseMessage response) {
 			if (!response.IsSuccessStatusCode) {
-				string content = response.Content.ReadAsStringAsync().Result;
+				string content = await response.Content.ReadAsStringAsync();
 
 				B2Error b2Error;
 				try {
@@ -30,6 +32,8 @@ namespace B2Net {
 				if (b2Error != null) {
 					throw new Exception($"Status: {b2Error.Status}, Code: {b2Error.Code}, Message: {b2Error.Message}");
 				}
+
+                // TODO: What if b2Error is null? We already consumed the content. Will this be a problem?
 			}
 		}
 
@@ -39,7 +43,13 @@ namespace B2Net {
 			}
 		}
 
-		public static string DetermineBucketId(B2Options options, string bucketId) {
+        public static string GetSHA1Hash(Stream fileStream) {
+            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider()) {
+				return HexStringFromBytes(sha1.ComputeHash(fileStream));
+			}
+        }
+
+        public static string DetermineBucketId(B2Options options, string bucketId) {
 			// Check for a persistant bucket
 			if (!options.PersistBucket && string.IsNullOrEmpty(bucketId)) {
 				throw new ArgumentNullException(nameof(bucketId));
